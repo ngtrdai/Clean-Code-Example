@@ -50,6 +50,22 @@ $account = new Account();
 $accountInfo = new Account();
 ```
 4. Use searchable names
+```php
+class User
+{
+    const TYPE_ADMIN = 1;
+}
+
+// Example for variable names not searchable
+if ($user->isAdmin == 1) {
+    // ...
+}
+
+// Example for variable names searchable
+if ($user->type == User::TYPE_ADMIN) {
+    // ...
+}
+```
 5. Avoid mental mapping
 ### Function rules
 ### Comment
