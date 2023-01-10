@@ -9,7 +9,7 @@
 ### Why should we care?
 ## **How to clean code?**
 ### Variables - Name rules
-1. Use meaningful names
+1. Use meaningful and pronounceable names
 
 ```php
 $moment = new DateTime();
@@ -49,9 +49,8 @@ $account = new Account();
 // Example for meaningful
 $accountInfo = new Account();
 ```
-4. Use pronounceable names
-5. Use searchable names
-6. Avoid mental mapping
+4. Use searchable names
+5. Avoid mental mapping
 ### Function rules
 ### Comment
 ### Object and data structures
