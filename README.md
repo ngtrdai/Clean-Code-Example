@@ -34,9 +34,24 @@ $accountList = [];
 $accounts = [];
 $acoountGroup = [];
 ```
-3. Use pronounceable names
-4. Use searchable names
-5. Avoid mental mapping
+3. Do not use a variable name that is the same as the name of a class
+```php
+// Do not use a variable name that is the same as the name of a class.
+class Account
+{
+    public function __construct()
+    {
+    }
+}
+
+$account = new Account();
+
+// Example for meaningful
+$accountInfo = new Account();
+```
+4. Use pronounceable names
+5. Use searchable names
+6. Avoid mental mapping
 ### Function rules
 ### Comment
 ### Object and data structures
