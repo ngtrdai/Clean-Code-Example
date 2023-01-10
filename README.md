@@ -67,6 +67,18 @@ if ($user->type == User::TYPE_ADMIN) {
 }
 ```
 5. Avoid mental mapping
+
+```Avoid mental mapping. For example, the names i, j, and k are okay as loop counters, but be careful when they are used as variable names.```
+```php
+// Example for mental mapping
+for ($i = 0; $i < 10; $i++) {
+    // ...
+}
+// Example for meaningful
+for ($index = 0; $index < 10; $index++) {
+    // ...
+}
+```
 ### Function rules
 ### Comment
 ### Object and data structures

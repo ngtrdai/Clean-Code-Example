@@ -16,3 +16,15 @@ $accountList = [];
 // Example for meaningful
 $accounts = [];
 $acoountGroup = [];
+
+// Avoid mental mapping. For example, the names i, j, and k are okay as loop counters,
+// but be careful when they are used as variable names.
+// Example for mental mapping
+for ($i = 0; $i < 10; $i++) {
+    // ...
+}
+// Example for meaningful
+for ($index = 0; $index < 10; $index++) {
+    // ...
+}
+
