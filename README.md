@@ -89,7 +89,7 @@ for ($index = 0; $index < 10; $index++) {
 ```php
 <?php
 
-// Function arguments - 2 or fewer ideal
+// Function arguments - 2 or fewer ideally
 class User
 {
     public $username;
@@ -110,6 +110,401 @@ function createUser(User $user)
 {
     // ...
 }
+```
+
+2. Function names should say what they do
+```php
+public function handle()
+{
+    // ...
+}
+
+// Good
+public function saveInfo()
+{
+    // ...
+}
+```
+
+3. Functions should only be one level of abstraction
+```php
+<?php
+
+// One level of abstraction per function
+// Bad
+function parseBetterPHP(string $content)
+{
+    $regexes = [
+        '/[a-zA-Z]+/'
+    ];
+
+    $statements = explode(' ', $content);
+    $tokens = [];
+
+    foreach($statements as $statement) {
+        foreach ($regexes as $regex) {
+            if (preg_match($regex, $statement, $matches)) {
+                $tokens[] = [
+                    'type' => gettype($matches[0]),
+                    'value' => $matches[0],
+                ];
+            }
+        }
+    }
+
+    $ast = [];
+    foreach ($tokens as $token) {
+        switch ($token['type']) {
+            case 'string':
+                $ast[] = [
+                    'type' => 'String',
+                    'value' => $token['value'],
+                ];
+                break;
+            case 'integer':
+                $ast[] = [
+                    'type' => 'Integer',
+                    'value' => $token['value'],
+                ];
+                break;
+        }
+    }
+
+    foreach ($ast as $node) {
+        switch ($node['type']) {
+            case 'String':
+                echo $node['value'];
+                break;
+            case 'Integer':
+                echo $node['value'];
+                break;
+        }
+    }
+}
+// parseBetterPHP('ahi2h1i');
+
+// Good
+class Tokenizer
+{
+    protected $regexes = [
+        '/[a-zA-Z]+/'
+    ];
+
+    public function tokenize(string $content)
+    {
+        $statements = explode(' ', $content);
+        $tokens = [];
+
+        foreach($statements as $statement) {
+            foreach ($this->regexes as $regex) {
+                if (preg_match($regex, $statement, $matches)) {
+                    $tokens[] = [
+                        'type' => gettype($matches[0]),
+                        'value' => $matches[0],
+                    ];
+                }
+            }
+        }
+
+        return $tokens;
+    }
+}
+
+class Lexer
+{
+    public function lex(array $tokens)
+    {
+        $ast = [];
+        foreach ($tokens as $token) {
+            switch ($token['type']) {
+                case 'string':
+                    $ast[] = [
+                        'type' => 'String',
+                        'value' => $token['value'],
+                    ];
+                    break;
+                case 'integer':
+                    $ast[] = [
+                        'type' => 'Integer',
+                        'value' => $token['value'],
+                    ];
+                    break;
+            }
+        }
+
+        return $ast;
+    }
+}
+
+class ParseBetterPHP
+{
+    private $lexer;
+    private $tokenizer;
+
+    public function __construct(Lexer $lexer, Tokenizer $tokenizer)
+    {
+        $this->lexer = $lexer;
+        $this->tokenizer = $tokenizer;
+    }
+
+    public function parse(string $content)
+    {
+        $tokens = $this->tokenizer->tokenize($content);
+        $ast = $this->lexer->lex($tokens);
+        foreach ($ast as $node) {
+            switch ($node['type']) {
+                case 'String':
+                    echo $node['value'];
+                    break;
+                case 'Integer':
+                    echo $node['value'];
+                    break;
+            }
+        }
+    }
+}
+
+$parser = new ParseBetterPHP(new Lexer, new Tokenizer);
+$parser->parse('ahi2h1i');
+```
+4. Don't use flags as function parameters
+
+`Function arguments - boolean arguments are a code smell`
+```php
+// Bad
+function createMember(User $user, $isAdmin)
+{
+    if ($isAdmin) {
+        // ...
+    } else {
+        // ...
+    }
+}
+
+// Good
+function createStaff(User $user)
+{
+    // ...
+}
+
+function createAdmin(User $user)
+{
+    // ...
+}
+```
+
+5. Don't write to global functions
+```php
+// Bad
+function dd($var)
+{
+    var_dump($var);
+    die();
+}
+
+// Good
+class Dumper
+{
+    public static function dump($var)
+    {
+        // ...
+        var_dump($var);
+    }
+}
+
+Dumper::dump([
+    'foo' => 'bar',
+]);
+```
+
+6. Don't use a Singleton pattern
+```php
+// Bad
+class Coin
+{
+    private const ADD_MORE_COIN = 10;
+    private $coin;
+    private static $instance;
+
+    private function __construct()
+    {
+        $this->coin = 0;
+    }
+
+    public static function getInstance()
+    {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    public function addCoin()
+    {
+        $this->coin += self::ADD_MORE_COIN;
+    }
+
+    public function getCoin()
+    {
+        return $this->coin;
+    }
+}
+
+$coin = Coin::getInstance();
+$coin->addCoin();
+$coin->addCoin();
+$coin->addCoin();
+
+echo $coin->getCoin();
+
+// Good
+class Coin
+{
+    private const ADD_MORE_COIN = 10;
+    private $coin;
+
+    public function __construct()
+    {
+        $this->coin = 0;
+    }
+
+    public function addCoin()
+    {
+        $this->coin += self::ADD_MORE_COIN;
+    }
+
+    public function getCoin()
+    {
+        return $this->coin;
+    }
+}
+```
+
+7. Encapsulate conditionals
+```php
+class Asset
+{
+    public $name;
+    public $state;
+
+    public const AVAILABLE = 'available';
+    public const UNAVAILABLE = 'unavailable';
+
+    function __construct($name, $state)
+    {
+        $this->name = $name;
+        $this->state = $state;
+    }
+
+    public function isAvailable()
+    {
+        return $this->state === self::AVAILABLE;
+    }
+
+    public function isUnavailable()
+    {
+        return $this->state === self::UNAVAILABLE;
+    }
+}
+
+$newAsset = new Asset('New Asset', Asset::AVAILABLE);
+// Encapsulate conditionals
+// Bad
+if ($newAsset->state === 'available') {
+    echo "This asset is Available\n";
+}
+
+// Good
+if ($newAsset->isAvailable()) {
+    echo "This asset is Available\n";
+}
+```
+
+8. Avoid conditionals
+```php
+<?php
+
+// Avoid conditionals
+// Bad
+class Book
+{
+    private $type;
+    private $price;
+    public const FICTION = 'fiction';
+    public const NON_FICTION = 'non-fiction';
+
+    public function __construct($type, $price)
+    {
+        $this->type = $type;
+        $this->price = $price;
+    }
+
+    public function getPrice()
+    {
+        switch ($this->type) {
+            case self::FICTION:
+                return $this->price * 0.8;
+            case self::NON_FICTION:
+                return $this->price * 0.9;
+            default:
+                return $this->price;
+        }
+    }
+}
+
+// Good
+interface BookInterface
+{
+    public function getPrice();
+}
+
+class FictionBook implements BookInterface
+{
+    private $price;
+
+    public function __construct($price)
+    {
+        $this->price = $price;
+    }
+
+    public function getPrice()
+    {
+        return $this->price * 0.8;
+    }
+}
+
+class NonFictionBook implements BookInterface
+{
+    private $price;
+
+    public function __construct($price)
+    {
+        $this->price = $price;
+    }
+
+    public function getPrice()
+    {
+        return $this->price * 0.9;
+    }
+}
+
+class OtherBook implements BookInterface
+{
+    private $price;
+
+    public function __construct($price)
+    {
+        $this->price = $price;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+}
+
+$book = new FictionBook(100);
 ```
 ### Comment
 ### Object and data structures
