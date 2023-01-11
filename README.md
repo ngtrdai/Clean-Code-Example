@@ -80,10 +80,74 @@ for ($index = 0; $index < 10; $index++) {
 }
 ```
 ### Function rules
+1. Function argument - 2 or fewer ideally
+
+`Limiting the amount of function parameters is incredibly important because it makes testing your function easier. Having more than three leads to a combinatorial explosion where you have to test tons of different cases with each separate argument.`
+
+`Zero arguments is the ideal case. One or two arguments is ok, and three should be avoided. Anything more than that should be consolidated. Usually, if you have more than two arguments then your function is trying to do too much. In cases where it's not, most of the time a higher-level object will suffice as an argument.`
+
+```php
+<?php
+
+// Function arguments - 2 or fewer ideal
+class User
+{
+    public $username;
+    public $firstname;
+    public $lastname;
+    public $email;
+    public $password;
+}
+
+// Bad
+function createUserMoreArguments($username, $firstname, $lastname, $email, $password)
+{
+    // ...
+}
+
+// Good
+function createUser(User $user)
+{
+    // ...
+}
+```
 ### Comment
 ### Object and data structures
 ### Error Handling
 ### SOLID
+1. Single Responsibility Principle
+
+```A class should have one, and only one, reason to change.```
+```php
+// Example for Single Responsibility Principle
+class User
+{
+    public function __construct()
+    {
+    }
+
+    public function save()
+    {
+        // ...
+    }
+
+    public function update()
+    {
+        // ...
+    }
+
+    public function delete()
+    {
+        // ...
+    }
+}
+
+```
+
+2. Open-Closed Principle
+3. Liskov Substitution Principle
+4. Interface Segregation Principle
+5. Dependency inversion principle
 ### Coding Convention in PHP
 # **Effective Unit Testing**
 ## **What is the effective unit testing?**
