@@ -25,7 +25,7 @@ class BicycleGood
         $this->color = $color;
     }
 
-    public function getColor(): int
+    public function getColor(): string
     {
         return $this->color;
     }
